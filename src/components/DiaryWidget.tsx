@@ -1,15 +1,20 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Feather, Send, Sparkles, Wind, Music, BookOpen } from "lucide-react";
+import {
+    Feather, Send, Sparkles, Wind, Music, BookOpen,
+    Volume2, VolumeX, Globe, ArrowRight,
+} from "lucide-react";
 import Link from "next/link";
-import { getHeritageResponse, DiaryResponse } from "@/lib/diaryAI";
+import { getHeritageResponse, detectEntryLanguage, DiaryResponse } from "@/lib/diaryAI";
 
 export default function DiaryWidget() {
     const [entry, setEntry] = useState("");
     const [response, setResponse] = useState<DiaryResponse | null>(null);
     const [isThinking, setIsThinking] = useState(false);
+    const [lang, setLang] = useState<"en" | "hi">("en");
+    const [isSpeaking, setIsSpeaking] = useState(false);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
 
     const handleSubmit = () => {
@@ -17,12 +22,69 @@ export default function DiaryWidget() {
         setIsThinking(true);
         setResponse(null);
 
+        // Auto-detect language
+        const detectedLang = detectEntryLanguage(entry);
+        setLang(detectedLang);
+
         setTimeout(() => {
             const aiResponse = getHeritageResponse(entry);
             setResponse(aiResponse);
             setIsThinking(false);
         }, 1200 + Math.random() * 800);
     };
+
+    const speakResponse = useCallback(() => {
+        if (!response) return;
+
+        if (isSpeaking) {
+            window.speechSynthesis.cancel();
+            setIsSpeaking(false);
+            return;
+        }
+
+        const text = lang === "hi"
+            ? (response.messageHi || response.message)
+            : response.message;
+
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = lang === "hi" ? "hi-IN" : "en-US";
+        utterance.rate = 0.85;
+        utterance.pitch = lang === "hi" ? 1.0 : 0.95;
+        utterance.volume = 1;
+
+        // Try to find a good voice
+        const voices = window.speechSynthesis.getVoices();
+        const preferred = voices.find((v) =>
+            lang === "hi"
+                ? v.lang.startsWith("hi")
+                : (v.name.includes("Google") || v.name.includes("Natural")) && v.lang.startsWith("en")
+        );
+        if (preferred) utterance.voice = preferred;
+
+        utterance.onend = () => setIsSpeaking(false);
+        utterance.onerror = () => setIsSpeaking(false);
+
+        setIsSpeaking(true);
+        window.speechSynthesis.speak(utterance);
+    }, [response, lang, isSpeaking]);
+
+    const toggleLang = () => {
+        window.speechSynthesis.cancel();
+        setIsSpeaking(false);
+        setLang((prev) => (prev === "en" ? "hi" : "en"));
+    };
+
+    const displayMessage = lang === "hi"
+        ? (response?.messageHi || response?.message)
+        : response?.message;
+
+    const displaySuggestionDetail = lang === "hi"
+        ? (response?.suggestion?.detailHi || response?.suggestion?.detail)
+        : response?.suggestion?.detail;
+
+    const displayBlessing = lang === "hi"
+        ? (response?.blessingHi || response?.blessing)
+        : response?.blessing;
 
     return (
         <section className="px-6 py-10">
@@ -47,7 +109,7 @@ export default function DiaryWidget() {
                     Dear Diary
                 </h2>
                 <p className="text-sm" style={{ color: "var(--muted-terracotta)", opacity: 0.7 }}>
-                    Share what&apos;s on your mind, receive ancient wisdom in return
+                    Share what&apos;s on your mind — I respond in English &amp; Hindi 🇮🇳
                 </p>
             </motion.div>
 
@@ -66,13 +128,12 @@ export default function DiaryWidget() {
                         boxShadow: "0 6px 24px rgba(59, 31, 11, 0.06), inset 0 1px 0 rgba(255,255,255,0.5)",
                     }}
                 >
-                    {/* Input area */}
                     <div className="p-5">
                         <textarea
                             ref={textareaRef}
                             value={entry}
                             onChange={(e) => setEntry(e.target.value)}
-                            placeholder="Dear Diary, today I feel..."
+                            placeholder="Dear Diary, today I feel... (English ya Hindi mein likh sakte ho)"
                             rows={4}
                             className="w-full resize-none bg-transparent text-sm leading-relaxed outline-none placeholder:opacity-40"
                             style={{
@@ -84,24 +145,29 @@ export default function DiaryWidget() {
                                 backgroundAttachment: "local",
                             }}
                             onKeyDown={(e) => {
-                                if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
-                                    handleSubmit();
-                                }
+                                if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) handleSubmit();
                             }}
                         />
                     </div>
 
-                    {/* Submit bar */}
                     <div
                         className="flex items-center justify-between px-5 py-3"
                         style={{ borderTop: "1px solid rgba(196, 162, 101, 0.12)" }}
                     >
                         <Link
                             href="/diary"
-                            className="text-xs underline decoration-dotted underline-offset-4 transition-colors hover:opacity-100"
-                            style={{ color: "var(--sandstone)", opacity: 0.6 }}
+                            className="group flex items-center gap-3 rounded-full px-5 py-2 text-sm font-medium transition-all duration-300 hover:scale-105"
+                            style={{
+                                background: "linear-gradient(135deg, rgba(201,162,39,0.08), rgba(201,162,39,0.15))",
+                                color: "var(--deep-maroon)",
+                                border: "1.5px solid rgba(201, 162, 39, 0.3)",
+                                fontFamily: "var(--font-heading)",
+                                animation: "glowPulse 3s ease-in-out infinite",
+                            }}
                         >
-                            Open full journal →
+                            <Feather className="h-4 w-4" style={{ color: "var(--temple-gold)" }} />
+                            Open Full Journal
+                            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" style={{ color: "var(--temple-gold)" }} />
                         </Link>
                         <button
                             onClick={handleSubmit}
@@ -140,7 +206,7 @@ export default function DiaryWidget() {
                                 <Sparkles className="h-5 w-5" style={{ color: "var(--temple-gold)" }} />
                             </motion.div>
                             <p className="text-xs animate-pulse" style={{ color: "var(--sandstone)" }}>
-                                Reflecting on your words...
+                                {lang === "hi" ? "Tumhare shabdon par soch raha hoon..." : "Reflecting on your words..."}
                             </p>
                         </motion.div>
                     )}
@@ -158,21 +224,53 @@ export default function DiaryWidget() {
                                 border: "1px solid rgba(196, 162, 101, 0.15)",
                             }}
                         >
-                            {/* Soul header */}
-                            <div className="flex items-center gap-2 mb-2">
-                                <div
-                                    className="flex h-6 w-6 items-center justify-center rounded-full"
-                                    style={{ background: "linear-gradient(135deg, var(--temple-gold), var(--saffron))" }}
-                                >
-                                    <Sparkles className="h-3 w-3 text-white" />
+                            {/* Header with controls */}
+                            <div className="flex items-center justify-between mb-2">
+                                <div className="flex items-center gap-2">
+                                    <div
+                                        className="flex h-6 w-6 items-center justify-center rounded-full"
+                                        style={{ background: "linear-gradient(135deg, var(--temple-gold), var(--saffron))" }}
+                                    >
+                                        <Sparkles className="h-3 w-3 text-white" />
+                                    </div>
+                                    <p className="text-xs font-medium" style={{ color: "var(--deep-maroon)", fontFamily: "var(--font-heading)" }}>
+                                        Soul of Anti-Gravity
+                                    </p>
                                 </div>
-                                <p className="text-xs font-medium" style={{ color: "var(--deep-maroon)", fontFamily: "var(--font-heading)" }}>
-                                    Soul of Anti-Gravity
-                                </p>
+                                <div className="flex items-center gap-1.5">
+                                    {/* Language toggle */}
+                                    <button
+                                        onClick={toggleLang}
+                                        className="flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-medium transition-all hover:scale-105"
+                                        style={{
+                                            background: "rgba(201, 162, 39, 0.1)",
+                                            color: "var(--temple-gold)",
+                                            border: "1px solid rgba(201, 162, 39, 0.2)",
+                                        }}
+                                        title="Switch language"
+                                    >
+                                        <Globe className="h-3 w-3" />
+                                        {lang === "en" ? "हिंदी" : "ENG"}
+                                    </button>
+                                    {/* Voice button */}
+                                    <button
+                                        onClick={speakResponse}
+                                        className="flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-medium transition-all hover:scale-105"
+                                        style={{
+                                            background: isSpeaking ? "var(--temple-gold)" : "rgba(201, 162, 39, 0.1)",
+                                            color: isSpeaking ? "white" : "var(--temple-gold)",
+                                            border: "1px solid rgba(201, 162, 39, 0.2)",
+                                        }}
+                                        title={isSpeaking ? "Stop speaking" : "Listen"}
+                                    >
+                                        {isSpeaking ? <VolumeX className="h-3 w-3" /> : <Volume2 className="h-3 w-3" />}
+                                        {isSpeaking ? "Stop" : lang === "hi" ? "सुनो" : "Listen"}
+                                    </button>
+                                </div>
                             </div>
 
                             <p className="text-sm leading-relaxed" style={{ color: "var(--foreground)", fontFamily: "var(--font-body)" }}>
-                                {response.message}
+                                {displayMessage}
                             </p>
 
                             {response.suggestion && (
@@ -188,15 +286,38 @@ export default function DiaryWidget() {
                                             {response.suggestion.label}
                                         </p>
                                         <p className="text-xs leading-relaxed" style={{ color: "var(--muted-terracotta)", opacity: 0.8 }}>
-                                            {response.suggestion.detail}
+                                            {displaySuggestionDetail}
                                         </p>
                                     </div>
                                 </div>
                             )}
 
                             <p className="text-xs italic" style={{ fontFamily: "var(--font-heading)", color: "var(--temple-gold)", opacity: 0.7 }}>
-                                &ldquo;{response.blessing}&rdquo;
+                                &ldquo;{displayBlessing}&rdquo;
                             </p>
+
+                            {/* Feature recommendation */}
+                            {response.featureRecommendation && (
+                                <Link
+                                    href={response.featureRecommendation.route}
+                                    className="group mt-2 flex items-center gap-2 rounded-xl px-4 py-3 transition-all hover:scale-[1.01]"
+                                    style={{
+                                        background: "linear-gradient(135deg, rgba(59,31,11,0.04), rgba(201,162,39,0.06))",
+                                        border: "1px solid rgba(201, 162, 39, 0.15)",
+                                    }}
+                                >
+                                    <div className="flex-1">
+                                        <p className="text-[10px] font-medium uppercase tracking-wider mb-0.5"
+                                            style={{ color: "var(--temple-gold)" }}>
+                                            💡 Try this feature
+                                        </p>
+                                        <p className="text-xs" style={{ color: "var(--foreground)", fontFamily: "var(--font-body)" }}>
+                                            <strong>{response.featureRecommendation.feature}</strong> — {response.featureRecommendation.reason}
+                                        </p>
+                                    </div>
+                                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" style={{ color: "var(--temple-gold)" }} />
+                                </Link>
+                            )}
                         </motion.div>
                     )}
                 </AnimatePresence>

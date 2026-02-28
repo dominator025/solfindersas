@@ -19,7 +19,7 @@ const features = [
         title: "Pranayama Guide",
         description: "Guided Vedic breathing exercises with visual coaching — from Nadi Shodhana to Bhramari, synced to your inner rhythm.",
         color: "#8b5e3c",
-        image: null,
+        image: "/images/feature_pranayama.png",
         href: "#tools",
     },
     {
@@ -27,7 +27,7 @@ const features = [
         title: "Panchatantra Wisdom",
         description: "Daily ancient Indian fables that heal the mind — timeless stories for modern emotional resilience and inner peace.",
         color: "#3B1F0B",
-        image: null,
+        image: "/images/feature_stories.png",
         href: "#tools",
     },
     {
