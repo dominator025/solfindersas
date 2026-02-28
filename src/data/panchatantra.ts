@@ -5,6 +5,7 @@ export interface PanchatantraStory {
     moral: string;
     character: string;
     book: string;
+    imageUrl?: string;
 }
 
 export const stories: PanchatantraStory[] = [
@@ -15,6 +16,7 @@ export const stories: PanchatantraStory[] = [
         moral: "Quick thinking and presence of mind can save you from the greatest dangers. True friendship should never be betrayed for selfish desires.",
         character: "🐒",
         book: "Mitra-Bheda (Loss of Friends)",
+        imageUrl: "/images/panchatantra/monkey_and_crocodile.png",
     },
     {
         id: 2,
@@ -23,6 +25,7 @@ export const stories: PanchatantraStory[] = [
         moral: "Those who cannot control their tongue bring destruction upon themselves. Listen to the counsel of wise friends and exercise restraint.",
         character: "🐢",
         book: "Mitra-Bheda (Loss of Friends)",
+        imageUrl: "/images/panchatantra/tortoise_and_geese.png",
     },
     {
         id: 3,
@@ -31,6 +34,7 @@ export const stories: PanchatantraStory[] = [
         moral: "Deceit may bring temporary success, but your true nature will always reveal itself. Authenticity is more powerful than pretense.",
         character: "🐺",
         book: "Kakolukiyam (Of Crows and Owls)",
+        imageUrl: "/images/panchatantra/blue_jackal.png",
     },
     {
         id: 4,
@@ -39,6 +43,7 @@ export const stories: PanchatantraStory[] = [
         moral: "Intelligence and courage can defeat even the most powerful adversary. Brains will always triumph over brute strength.",
         character: "🐇",
         book: "Aparikshitakarakam (Ill-Considered Actions)",
+        imageUrl: "/images/panchatantra/lion_and_rabbit.png",
     },
     {
         id: 5,
@@ -47,6 +52,7 @@ export const stories: PanchatantraStory[] = [
         moral: "Do not build castles in the air. Focus on what is real and present rather than getting lost in fantasies about an uncertain future.",
         character: "🏺",
         book: "Labdhapranasam (Loss of Gains)",
+        imageUrl: "/images/panchatantra/brahmins_dream.png",
     },
     {
         id: 6,
@@ -55,6 +61,7 @@ export const stories: PanchatantraStory[] = [
         moral: "There is a time and place for everything. Ignoring wise counsel and acting at the wrong moment leads to suffering.",
         character: "🫏",
         book: "Kakolukiyam (Of Crows and Owls)",
+        imageUrl: "/images/panchatantra/musical_donkey.png",
     },
     {
         id: 7,
@@ -63,6 +70,7 @@ export const stories: PanchatantraStory[] = [
         moral: "Never underestimate anyone based on their size. A friend in need is a friend indeed, and kindness is always repaid.",
         character: "🐘",
         book: "Mitra-Samprapti (Gaining of Friends)",
+        imageUrl: "/images/panchatantra/mice_and_elephants.png",
     },
 ];
 

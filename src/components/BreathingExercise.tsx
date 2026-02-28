@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { Wind, Play, Square, RotateCcw } from "lucide-react";
+import Image from "next/image";
 
 type Phase = "idle" | "inhale" | "hold" | "exhale" | "rest";
 
@@ -146,6 +147,69 @@ export default function BreathingExercise() {
 
                 {/* Breathing circle */}
                 <div className="flex flex-col items-center gap-4 py-4">
+                    {/* Pranayama posture illustration — animated breathing */}
+                    <div className="mb-2 overflow-hidden rounded-xl border border-[rgba(212,167,106,0.25)] shadow-sm relative">
+                        {/* Glow effect behind image that pulses with breath */}
+                        <div
+                            className="absolute inset-0 transition-all"
+                            style={{
+                                background: `radial-gradient(ellipse at 50% 60%, ${getColor()}15, transparent 70%)`,
+                                transitionDuration: currentPhase ? `${currentPhase.duration}s` : "3s",
+                                transitionTimingFunction: "ease-in-out",
+                                opacity: isActive ? 1 : 0.5,
+                            }}
+                        />
+                        <div
+                            className="relative h-64 sm:h-80 w-full overflow-hidden"
+                            style={{ minWidth: "280px", background: "rgba(253, 246, 236, 0.5)" }}
+                        >
+                            <div
+                                className="absolute inset-0 transition-all origin-bottom"
+                                style={{
+                                    transform: isActive
+                                        ? `scaleY(${currentPhase?.phase === "inhale" || currentPhase?.phase === "hold" ? 1.06 : currentPhase?.phase === "exhale" ? 0.97 : 1}) scaleX(${currentPhase?.phase === "inhale" || currentPhase?.phase === "hold" ? 1.03 : currentPhase?.phase === "exhale" ? 0.99 : 1})`
+                                        : "scaleY(1) scaleX(1)",
+                                    transitionDuration: currentPhase ? `${currentPhase.duration}s` : "3s",
+                                    transitionTimingFunction: "ease-in-out",
+                                    animation: !isActive ? "gentleBreath 5s ease-in-out infinite" : "none",
+                                }}
+                            >
+                                <Image
+                                    src="/images/pranayama_posture.png"
+                                    alt="Pranayama sitting posture — Padmasana with Chin Mudra"
+                                    fill
+                                    className="object-contain"
+                                    sizes="(max-width: 768px) 100vw, 500px"
+                                />
+                            </div>
+
+                            {/* Phase label overlay on image */}
+                            {isActive && currentPhase && (
+                                <div
+                                    className="absolute bottom-3 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider backdrop-blur-sm transition-all duration-500"
+                                    style={{
+                                        background: `${getColor()}cc`,
+                                        color: "#fff",
+                                        fontFamily: "var(--font-body)",
+                                        boxShadow: `0 2px 12px ${getColor()}40`,
+                                    }}
+                                >
+                                    {currentPhase.label}
+                                </div>
+                            )}
+                        </div>
+                        <p
+                            className="px-3 py-2 text-center text-xs"
+                            style={{
+                                color: "var(--muted-terracotta)",
+                                fontFamily: "var(--font-body)",
+                                background: "rgba(212, 167, 106, 0.06)",
+                                opacity: 0.8,
+                            }}
+                        >
+                            Sit in Padmasana · Hands in Chin Mudra · Spine straight · Eyes closed
+                        </p>
+                    </div>
                     <div className="relative flex h-32 w-32 items-center justify-center">
                         {/* Animated circle */}
                         <div

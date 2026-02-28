@@ -2,6 +2,7 @@
 
 import { Raaga, raagas } from "@/data/raagas";
 import RaagaCard from "./RaagaCard";
+import { motion } from "framer-motion";
 
 interface RaagaGridProps {
     selectedRaaga: Raaga | null;
@@ -17,7 +18,13 @@ export default function RaagaGrid({
     return (
         <section className="px-6 py-10">
             {/* Section heading */}
-            <div className="mb-8 text-center">
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ duration: 0.6 }}
+                className="mb-8 text-center"
+            >
                 <h2
                     className="mb-2 text-3xl font-semibold"
                     style={{
@@ -33,21 +40,33 @@ export default function RaagaGrid({
                 >
                     Select a raaga to begin your healing journey
                 </p>
-            </div>
+            </motion.div>
 
             {/* Grid */}
-            <div className="mx-auto grid max-w-5xl grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <motion.div
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ duration: 0.5 }}
+                className="mx-auto grid max-w-5xl grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3"
+            >
                 {raagas.map((raaga, index) => (
-                    <div key={raaga.id} style={{ animationDelay: `${index * 0.08}s` }}>
+                    <motion.div
+                        key={raaga.id}
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, margin: "-50px" }}
+                        transition={{ duration: 0.5, delay: index * 0.1, ease: "easeOut" }}
+                    >
                         <RaagaCard
                             raaga={raaga}
                             isSelected={selectedRaaga?.id === raaga.id}
                             onSelect={onSelectRaaga}
                             isPlaying={isPlaying}
                         />
-                    </div>
+                    </motion.div>
                 ))}
-            </div>
+            </motion.div>
         </section>
     );
 }

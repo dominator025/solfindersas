@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Inter } from "next/font/google";
 import "./globals.css";
+import { TimeThemeProvider } from "@/components/TimeThemeProvider";
 
 const cormorant = Cormorant_Garamond({
   variable: "--font-heading",
@@ -32,8 +33,11 @@ export default function RootLayout({
         className={`${cormorant.variable} ${inter.variable} antialiased`}
         style={{ fontFamily: "var(--font-body)" }}
       >
-        <div className="flex min-h-screen flex-col">{children}</div>
+        <TimeThemeProvider>
+          <div className="flex min-h-screen flex-col">{children}</div>
+        </TimeThemeProvider>
       </body>
     </html>
   );
 }
+

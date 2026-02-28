@@ -7,6 +7,8 @@ import AboutSection from "@/components/AboutSection";
 import RaagaGrid from "@/components/RaagaGrid";
 import PlayerSection from "@/components/PlayerSection";
 import WellnessTools from "@/components/WellnessTools";
+import MoodCheckin from "@/components/MoodCheckin";
+import { motion } from "framer-motion";
 import Footer from "@/components/Footer";
 import { useAudioPlayer } from "@/hooks/useAudioPlayer";
 import { Raaga } from "@/data/raagas";
@@ -41,6 +43,16 @@ export default function Home() {
       <div id="about">
         <AboutSection />
       </div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-50px" }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        className="mx-auto max-w-md px-6 pt-2 pb-12"
+      >
+        <MoodCheckin />
+      </motion.div>
 
       {/* Decorative divider */}
       <div className="mx-auto flex items-center justify-center gap-3 py-2">

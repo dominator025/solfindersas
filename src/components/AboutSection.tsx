@@ -1,6 +1,5 @@
-"use client";
-
 import { Leaf, Sun, Moon, BookOpen } from "lucide-react";
+import { motion, Variants } from "framer-motion";
 
 const features = [
     {
@@ -25,12 +24,40 @@ const features = [
     },
 ];
 
+const containerVariants: Variants = {
+    hidden: { opacity: 0 },
+    visible: {
+        opacity: 1,
+        transition: {
+            staggerChildren: 0.15,
+        },
+    },
+};
+
+const itemVariants: Variants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+        opacity: 1,
+        y: 0,
+        transition: {
+            duration: 0.5,
+            ease: "easeOut",
+        },
+    },
+};
+
 export default function AboutSection() {
     return (
-        <section className="px-6 py-12">
+        <section className="px-6 pt-12 pb-6">
             <div className="mx-auto max-w-5xl">
                 {/* Section heading */}
-                <div className="mb-10 text-center">
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-100px" }}
+                    transition={{ duration: 0.6 }}
+                    className="mb-10 text-center"
+                >
                     <p
                         className="mb-2 text-xs font-medium uppercase tracking-widest"
                         style={{ color: "var(--saffron)", fontFamily: "var(--font-body)" }}
@@ -58,27 +85,26 @@ export default function AboutSection() {
                         3,000 years. Each raaga is a precise melodic framework that creates
                         specific emotional and physiological responses in the listener.
                     </p>
-                </div>
+                </motion.div>
 
                 {/* Feature cards */}
-                <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4">
+                <motion.div
+                    variants={containerVariants}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, margin: "-50px" }}
+                    className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4"
+                >
                     {features.map((feat, i) => (
-                        <div
+                        <motion.div
                             key={feat.title}
-                            className="group rounded-2xl p-5 transition-all duration-300 hover:-translate-y-1"
+                            variants={itemVariants}
+                            whileHover={{ y: -5, boxShadow: "0 8px 25px rgba(212, 167, 106, 0.15)", borderColor: "var(--sandstone)" }}
+                            className="group rounded-2xl p-5"
                             style={{
                                 background: "var(--soft-ivory)",
                                 border: "1px solid transparent",
-                                animation: `fadeInUp 0.5s ease-out ${i * 0.1}s both`,
-                            }}
-                            onMouseEnter={(e) => {
-                                e.currentTarget.style.borderColor = "var(--sandstone)";
-                                e.currentTarget.style.boxShadow =
-                                    "0 8px 25px rgba(212, 167, 106, 0.15)";
-                            }}
-                            onMouseLeave={(e) => {
-                                e.currentTarget.style.borderColor = "transparent";
-                                e.currentTarget.style.boxShadow = "none";
+                                transition: "background-color 0.3s ease",
                             }}
                         >
                             <div
@@ -108,9 +134,9 @@ export default function AboutSection() {
                             >
                                 {feat.desc}
                             </p>
-                        </div>
+                        </motion.div>
                     ))}
-                </div>
+                </motion.div>
             </div>
         </section>
     );

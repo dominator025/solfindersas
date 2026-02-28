@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { getDailyStory, stories } from "@/data/panchatantra";
 import { BookOpen, ChevronDown, ChevronUp, Sparkles, RefreshCw } from "lucide-react";
+import Image from "next/image";
 
 export default function DailyStory() {
     const [isExpanded, setIsExpanded] = useState(false);
@@ -110,6 +111,21 @@ export default function DailyStory() {
                     >
                         📖 {currentStory.book}
                     </span>
+
+                    {/* Story Image */}
+                    {currentStory.imageUrl && (
+                        <div className="mb-4 overflow-hidden rounded-xl border border-[rgba(212,167,106,0.3)] shadow-sm">
+                            <div className="relative h-48 sm:h-64 w-full">
+                                <Image
+                                    src={currentStory.imageUrl}
+                                    alt={currentStory.title}
+                                    fill
+                                    className="object-cover transition-transform duration-700 hover:scale-105"
+                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                />
+                            </div>
+                        </div>
+                    )}
 
                     {/* Story text */}
                     <div

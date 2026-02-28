@@ -1,14 +1,14 @@
 @import "tailwindcss";
 
 :root {
-  --saffron: #e8902e;
-  --deep-maroon: #6b1d2a;
-  --warm-cream: #fff8f0;
-  --sandstone: #d4a76a;
-  --temple-gold: #c9a94e;
+  --saffron: #d4952b;
+  --deep-maroon: #3B1F0B;
+  --warm-cream: #FDF6EC;
+  --sandstone: #c4a265;
+  --temple-gold: #c9a227;
   --twilight-indigo: #2c2450;
   --soft-ivory: #f5ede0;
-  --muted-terracotta: #b56b4a;
+  --muted-terracotta: #8b5e3c;
   --background: var(--warm-cream);
   --foreground: #2a1f1a;
 }
@@ -41,6 +41,16 @@ body {
   color: var(--foreground);
   font-family: var(--font-body);
   min-height: 100vh;
+  transition: background-color 1.5s ease, color 1.5s ease;
+}
+
+/* Smooth theme transitions for all themed elements */
+header,
+section,
+div,
+footer,
+nav {
+  transition: background 1.5s ease, color 1.5s ease, border-color 1.5s ease, box-shadow 1.5s ease;
 }
 
 /* ===== Breathing Orb Animations ===== */
@@ -101,6 +111,22 @@ body {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes gentleBreath {
+
+  0%,
+  100% {
+    transform: scaleY(1) scaleX(1);
+  }
+
+  40% {
+    transform: scaleY(1.035) scaleX(1.015);
+  }
+
+  60% {
+    transform: scaleY(1.035) scaleX(1.015);
   }
 }
 

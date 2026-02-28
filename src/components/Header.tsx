@@ -20,7 +20,7 @@ export default function Header() {
             className="sticky top-0 z-50"
             style={{
                 background:
-                    "linear-gradient(135deg, var(--deep-maroon) 0%, #8B4513 50%, var(--saffron) 100%)",
+                    "var(--header-gradient, linear-gradient(135deg, var(--deep-maroon) 0%, #8B4513 50%, var(--saffron) 100%))",
                 boxShadow: "0 2px 12px rgba(0,0,0,0.15)",
             }}
         >

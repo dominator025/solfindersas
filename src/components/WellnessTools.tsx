@@ -2,77 +2,151 @@
 
 import DailyStory from "./DailyStory";
 import BreathingExercise from "./BreathingExercise";
-import MoodCheckin from "./MoodCheckin";
-import { Compass } from "lucide-react";
+import { BookOpen, Wind } from "lucide-react";
+import { motion } from "framer-motion";
 
 export default function WellnessTools() {
     return (
         <section className="px-6 py-12">
             <div className="mx-auto max-w-5xl">
-                {/* Section heading */}
-                <div className="mb-8 text-center">
-                    <div className="mb-3 flex items-center justify-center gap-2">
-                        <Compass
-                            className="h-5 w-5"
-                            style={{ color: "var(--temple-gold)" }}
-                        />
-                        <p
-                            className="text-xs font-medium uppercase tracking-widest"
+
+                {/* ──────────────────── STORY SECTION ──────────────────── */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-80px" }}
+                    transition={{ duration: 0.6 }}
+                    className="mb-16"
+                >
+                    {/* Story section heading */}
+                    <div className="mb-6 text-center">
+                        <div className="mb-3 flex items-center justify-center gap-2">
+                            <div
+                                className="flex h-9 w-9 items-center justify-center rounded-xl"
+                                style={{
+                                    background: "linear-gradient(135deg, var(--deep-maroon), var(--muted-terracotta))",
+                                }}
+                            >
+                                <BookOpen className="h-4 w-4 text-white" />
+                            </div>
+                            <p
+                                className="text-xs font-medium uppercase tracking-widest"
+                                style={{
+                                    color: "var(--saffron)",
+                                    fontFamily: "var(--font-body)",
+                                }}
+                            >
+                                Ancient Tales for Inner Peace
+                            </p>
+                        </div>
+                        <h2
+                            className="mb-2 text-3xl font-semibold"
                             style={{
-                                color: "var(--saffron)",
+                                fontFamily: "var(--font-heading)",
+                                color: "var(--deep-maroon)",
+                            }}
+                        >
+                            Stories That Heal the Mind
+                        </h2>
+                        <p
+                            className="mx-auto max-w-2xl text-sm leading-relaxed"
+                            style={{
+                                color: "var(--muted-terracotta)",
+                                opacity: 0.8,
                                 fontFamily: "var(--font-body)",
                             }}
                         >
-                            Interactive Wellness Tools
+                            For thousands of years, Indian Panchatantra stories have been used as
+                            tools for reflection and mental clarity. Each tale carries a timeless
+                            moral that quiets the restless mind, cultivates wisdom, and nurtures
+                            emotional resilience — a gentle form of therapy through narrative.
                         </p>
                     </div>
-                    <h2
-                        className="mb-2 text-3xl font-semibold"
-                        style={{
-                            fontFamily: "var(--font-heading)",
-                            color: "var(--deep-maroon)",
-                        }}
-                    >
-                        Your Daily Wellness Ritual
-                    </h2>
-                    <p
-                        className="mx-auto max-w-lg text-sm"
-                        style={{
-                            color: "var(--muted-terracotta)",
-                            opacity: 0.7,
-                            fontFamily: "var(--font-body)",
-                        }}
-                    >
-                        Ancient tools for modern minds — stories, breath, and
-                        self-reflection rooted in Indian heritage.
-                    </p>
-                </div>
 
-                {/* Tools grid */}
-                <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
-                    {/* Daily Story — takes full width of first column */}
-                    <div
-                        className="lg:col-span-2"
-                        style={{ animation: "fadeInUp 0.5s ease-out both" }}
+                    {/* Story card — full width */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, margin: "-50px" }}
+                        transition={{ duration: 0.6, delay: 0.15 }}
                     >
                         <DailyStory />
-                    </div>
+                    </motion.div>
+                </motion.div>
 
-                    {/* Mood Check-in */}
-                    <div style={{ animation: "fadeInUp 0.5s ease-out 0.1s both" }}>
-                        <MoodCheckin />
-                    </div>
 
-                    {/* Breathing Exercise — full width */}
-                    <div
-                        className="lg:col-span-3"
-                        style={{ animation: "fadeInUp 0.5s ease-out 0.2s both" }}
-                    >
-                        <div className="mx-auto max-w-md">
-                            <BreathingExercise />
-                        </div>
-                    </div>
+                {/* ──────── Decorative divider between sections ──────── */}
+                <div className="mx-auto mb-14 flex items-center justify-center gap-3">
+                    <span className="block h-px w-20" style={{ background: "var(--sandstone)", opacity: 0.3 }} />
+                    <span className="block h-1.5 w-1.5 rotate-45" style={{ background: "var(--temple-gold)", opacity: 0.5 }} />
+                    <span className="block h-px w-20" style={{ background: "var(--sandstone)", opacity: 0.3 }} />
                 </div>
+
+
+                {/* ──────────────────── PRANAYAMA SECTION ──────────────────── */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-80px" }}
+                    transition={{ duration: 0.6 }}
+                >
+                    {/* Pranayama section heading */}
+                    <div className="mb-6 text-center">
+                        <div className="mb-3 flex items-center justify-center gap-2">
+                            <div
+                                className="flex h-9 w-9 items-center justify-center rounded-xl"
+                                style={{
+                                    background: "linear-gradient(135deg, var(--saffron), var(--temple-gold))",
+                                }}
+                            >
+                                <Wind className="h-4 w-4 text-white" />
+                            </div>
+                            <p
+                                className="text-xs font-medium uppercase tracking-widest"
+                                style={{
+                                    color: "var(--saffron)",
+                                    fontFamily: "var(--font-body)",
+                                }}
+                            >
+                                Vedic Breathing Practice
+                            </p>
+                        </div>
+                        <h2
+                            className="mb-2 text-3xl font-semibold"
+                            style={{
+                                fontFamily: "var(--font-heading)",
+                                color: "var(--deep-maroon)",
+                            }}
+                        >
+                            Pranayama — The Breath of Life
+                        </h2>
+                        <p
+                            className="mx-auto max-w-2xl text-sm leading-relaxed"
+                            style={{
+                                color: "var(--muted-terracotta)",
+                                opacity: 0.8,
+                                fontFamily: "var(--font-body)",
+                            }}
+                        >
+                            Pranayama is the ancient Yogic science of breath control.
+                            Sit in Padmasana (lotus pose), rest your hands on your knees
+                            in Chin Mudra — thumb and index finger gently touching — and
+                            follow the guided rhythm below.
+                        </p>
+                    </div>
+
+                    {/* Pranayama card — full width, centered */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, margin: "-50px" }}
+                        transition={{ duration: 0.6, delay: 0.15 }}
+                        className="mx-auto max-w-2xl"
+                    >
+                        <BreathingExercise />
+                    </motion.div>
+                </motion.div>
+
             </div>
         </section>
     );
