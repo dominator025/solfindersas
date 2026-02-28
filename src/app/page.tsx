@@ -13,7 +13,7 @@ import DiaryWidget from "@/components/DiaryWidget";
 import { motion } from "framer-motion";
 import Footer from "@/components/Footer";
 import { useAudioPlayer } from "@/hooks/useAudioPlayer";
-import { Raaga } from "@/data/raagas";
+import { Raaga, raagas } from "@/data/raagas";
 
 export default function Home() {
   const {
@@ -37,6 +37,16 @@ export default function Home() {
     [loadRaaga]
   );
 
+  const handleMoodRaaga = useCallback(
+    (raagaId: string) => {
+      const raaga = raagas.find((r) => r.id === raagaId);
+      if (raaga) {
+        handleSelectRaaga(raaga);
+      }
+    },
+    [handleSelectRaaga]
+  );
+
   return (
     <>
       <Header />
@@ -56,7 +66,7 @@ export default function Home() {
         transition={{ duration: 0.8, ease: "easeOut" }}
         className="mx-auto max-w-md px-6 pt-2 pb-12"
       >
-        <MoodCheckin />
+        <MoodCheckin onSelectRaaga={handleMoodRaaga} />
       </motion.div>
 
       {/* Decorative divider */}

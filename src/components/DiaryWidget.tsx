@@ -4,7 +4,7 @@ import { useState, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
     Feather, Send, Sparkles, Wind, Music, BookOpen,
-    Volume2, VolumeX, Globe, ArrowRight, Mic2,
+    Volume2, VolumeX, Globe, ArrowRight,
 } from "lucide-react";
 import Link from "next/link";
 import { getHeritageResponse, detectEntryLanguage, DiaryResponse } from "@/lib/diaryAI";
@@ -33,10 +33,6 @@ export default function DiaryWidget() {
         }, 1200 + Math.random() * 800);
     };
 
-    /**
-     * Deep male voice — Amitabh Bachchan-style baritone:
-     * pitch 0.65, rate 0.75, prioritizes male voices
-     */
     const speakResponse = useCallback(() => {
         if (!response) return;
 
@@ -46,31 +42,24 @@ export default function DiaryWidget() {
             return;
         }
 
-        const message = lang === "hi" ? (response.messageHi || response.message) : response.message;
-        const suggestion = response.suggestion
-            ? `\n\n${response.suggestion.label}. ${lang === "hi" ? (response.suggestion.detailHi || response.suggestion.detail) : response.suggestion.detail}`
-            : "";
-        const blessing = `\n\n${lang === "hi" ? (response.blessingHi || response.blessing) : response.blessing}`;
-        const fullText = message + suggestion + blessing;
+        const text = lang === "hi"
+            ? (response.messageHi || response.message)
+            : response.message;
 
-        const utterance = new SpeechSynthesisUtterance(fullText);
+        const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = lang === "hi" ? "hi-IN" : "en-US";
-        utterance.rate = 0.75;
-        utterance.pitch = 0.65;
+        utterance.rate = 0.85;
+        utterance.pitch = lang === "hi" ? 1.0 : 0.95;
         utterance.volume = 1;
 
+        // Try to find a good voice
         const voices = window.speechSynthesis.getVoices();
-        const langPrefix = lang === "hi" ? "hi" : "en";
-        const deepMale = voices.find((v) =>
-            v.lang.startsWith(langPrefix) &&
-            (v.name.toLowerCase().includes("male") || v.name.toLowerCase().includes("deep"))
+        const preferred = voices.find((v) =>
+            lang === "hi"
+                ? v.lang.startsWith("hi")
+                : (v.name.includes("Google") || v.name.includes("Natural")) && v.lang.startsWith("en")
         );
-        const googleMale = voices.find((v) =>
-            v.lang.startsWith(langPrefix) &&
-            (v.name.includes("Google") || v.name.includes("Microsoft") || v.name.includes("Natural"))
-        );
-        const anyMatch = voices.find((v) => v.lang.startsWith(langPrefix));
-        utterance.voice = deepMale || googleMale || anyMatch || null;
+        if (preferred) utterance.voice = preferred;
 
         utterance.onend = () => setIsSpeaking(false);
         utterance.onerror = () => setIsSpeaking(false);
@@ -306,43 +295,6 @@ export default function DiaryWidget() {
                             <p className="text-xs italic" style={{ fontFamily: "var(--font-heading)", color: "var(--temple-gold)", opacity: 0.7 }}>
                                 &ldquo;{displayBlessing}&rdquo;
                             </p>
-
-                            {/* ═══ READ ALOUD SECTION ═══ */}
-                            <div className="rounded-xl overflow-hidden"
-                                style={{ background: "linear-gradient(135deg, rgba(59,31,11,0.06), rgba(201,162,39,0.04))", border: "1px solid rgba(201, 162, 39, 0.15)" }}>
-                                <div className="flex items-center justify-between px-3 py-2">
-                                    <div className="flex items-center gap-2">
-                                        <div className="flex h-6 w-6 items-center justify-center rounded-full"
-                                            style={{ background: isSpeaking ? "var(--deep-maroon)" : "rgba(59,31,11,0.08)" }}>
-                                            <Mic2 className="h-3 w-3" style={{ color: isSpeaking ? "white" : "var(--deep-maroon)" }} />
-                                        </div>
-                                        <p className="text-[10px] font-semibold" style={{ color: "var(--deep-maroon)", fontFamily: "var(--font-heading)" }}>
-                                            {lang === "hi" ? "गहरी आवाज़ में सुनिए" : "Deep Male Voice"}
-                                        </p>
-                                    </div>
-                                    <button
-                                        onClick={speakResponse}
-                                        className="flex items-center gap-1.5 rounded-full px-3 py-1 text-[10px] font-medium transition-all hover:scale-105"
-                                        style={{
-                                            background: isSpeaking ? "var(--deep-maroon)" : "linear-gradient(135deg, var(--deep-maroon), var(--saffron))",
-                                            color: "white",
-                                        }}>
-                                        {isSpeaking ? <VolumeX className="h-3 w-3" /> : <Volume2 className="h-3 w-3" />}
-                                        {isSpeaking ? "Stop" : lang === "hi" ? "सुनो" : "Read Aloud"}
-                                    </button>
-                                </div>
-                                {isSpeaking && (
-                                    <div className="flex items-end justify-center gap-[2px] px-3 pb-2">
-                                        {Array.from({ length: 16 }).map((_, i) => (
-                                            <motion.div key={i} className="rounded-full"
-                                                style={{ width: "2.5px", background: "linear-gradient(to top, var(--deep-maroon), var(--temple-gold))" }}
-                                                animate={{ height: [6, 12 + Math.random() * 14, 6] }}
-                                                transition={{ duration: 0.4 + Math.random() * 0.4, repeat: Infinity, delay: i * 0.05 }}
-                                            />
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
 
                             {/* Feature recommendation */}
                             {response.featureRecommendation && (

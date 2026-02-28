@@ -6,7 +6,7 @@ import Footer from "@/components/Footer";
 import { motion, AnimatePresence } from "framer-motion";
 import {
     BookOpen, Send, Feather, Sparkles, Wind, Music,
-    Volume2, VolumeX, Globe, ArrowRight, Mic2,
+    Volume2, VolumeX, Globe, ArrowRight,
 } from "lucide-react";
 import Link from "next/link";
 import { getHeritageResponse, detectEntryLanguage, DiaryResponse } from "@/lib/diaryAI";
@@ -43,12 +43,6 @@ export default function DiaryPage() {
         }
     }, [response]);
 
-    /**
-     * Deep male voice — tuned for Amitabh Bachchan-style baritone:
-     * - Very low pitch (0.65) for that deep, resonant gravitas
-     * - Slow rate (0.75) for deliberate, commanding delivery
-     * - Prioritizes male voices in both Hindi and English
-     */
     const speakResponse = useCallback(() => {
         if (!response) return;
 
@@ -58,42 +52,23 @@ export default function DiaryPage() {
             return;
         }
 
-        // Build the full text: message + suggestion + blessing
-        const message = lang === "hi"
+        const text = lang === "hi"
             ? (response.messageHi || response.message)
             : response.message;
-        const suggestion = response.suggestion
-            ? `\n\n${response.suggestion.label}. ${lang === "hi" ? (response.suggestion.detailHi || response.suggestion.detail) : response.suggestion.detail}`
-            : "";
-        const blessing = `\n\n${lang === "hi" ? (response.blessingHi || response.blessing) : response.blessing}`;
-        const fullText = message + suggestion + blessing;
 
-        const utterance = new SpeechSynthesisUtterance(fullText);
+        const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = lang === "hi" ? "hi-IN" : "en-US";
-        // Deep baritone settings — like Amitabh Bachchan
-        utterance.rate = 0.75;   // Slow, deliberate
-        utterance.pitch = 0.65;  // Very deep
+        utterance.rate = 0.85;
+        utterance.pitch = lang === "hi" ? 1.0 : 0.95;
         utterance.volume = 1;
 
-        // Find the best deep male voice
         const voices = window.speechSynthesis.getVoices();
-        const langPrefix = lang === "hi" ? "hi" : "en";
-
-        // Priority order for voice selection:
-        // 1. Male voice with "Deep" or "Male" in name
-        // 2. Any male Google/Microsoft/Natural voice
-        // 3. Any voice matching the language
-        const deepMale = voices.find((v) =>
-            v.lang.startsWith(langPrefix) &&
-            (v.name.toLowerCase().includes("male") || v.name.toLowerCase().includes("deep"))
+        const preferred = voices.find((v) =>
+            lang === "hi"
+                ? v.lang.startsWith("hi")
+                : (v.name.includes("Google") || v.name.includes("Natural")) && v.lang.startsWith("en")
         );
-        const googleMale = voices.find((v) =>
-            v.lang.startsWith(langPrefix) &&
-            (v.name.includes("Google") || v.name.includes("Microsoft") || v.name.includes("Natural"))
-        );
-        const anyMatch = voices.find((v) => v.lang.startsWith(langPrefix));
-
-        utterance.voice = deepMale || googleMale || anyMatch || null;
+        if (preferred) utterance.voice = preferred;
 
         utterance.onend = () => setIsSpeaking(false);
         utterance.onerror = () => setIsSpeaking(false);
@@ -387,62 +362,6 @@ export default function DiaryPage() {
                                                     style={{ fontFamily: "var(--font-heading)", color: "var(--temple-gold)", opacity: 0.8 }}>
                                                     &ldquo;{displayBlessing}&rdquo;
                                                 </p>
-
-                                                {/* ═══ READ ALOUD SECTION ═══ */}
-                                                <div className="rounded-xl overflow-hidden"
-                                                    style={{ background: "linear-gradient(135deg, rgba(59,31,11,0.06), rgba(201,162,39,0.04))", border: "1px solid rgba(201, 162, 39, 0.15)" }}>
-                                                    <div className="flex items-center justify-between px-4 py-2.5">
-                                                        <div className="flex items-center gap-2">
-                                                            <div className="flex h-7 w-7 items-center justify-center rounded-full"
-                                                                style={{ background: isSpeaking ? "var(--deep-maroon)" : "rgba(59,31,11,0.08)" }}>
-                                                                <Mic2 className="h-3.5 w-3.5" style={{ color: isSpeaking ? "white" : "var(--deep-maroon)" }} />
-                                                            </div>
-                                                            <div>
-                                                                <p className="text-xs font-semibold" style={{ color: "var(--deep-maroon)", fontFamily: "var(--font-heading)" }}>
-                                                                    {lang === "hi" ? "सुनिए — गहरी आवाज़ में" : "Listen — Deep Male Voice"}
-                                                                </p>
-                                                                <p className="text-[10px]" style={{ color: "var(--sandstone)" }}>
-                                                                    {isSpeaking ? (lang === "hi" ? "बोल रहा हूँ..." : "Speaking...") : "Baritone narration"}
-                                                                </p>
-                                                            </div>
-                                                        </div>
-                                                        <button
-                                                            onClick={speakResponse}
-                                                            className="flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-medium transition-all duration-200 hover:scale-105"
-                                                            style={{
-                                                                background: isSpeaking
-                                                                    ? "var(--deep-maroon)"
-                                                                    : "linear-gradient(135deg, var(--deep-maroon), var(--saffron))",
-                                                                color: "white",
-                                                            }}>
-                                                            {isSpeaking ? <VolumeX className="h-3.5 w-3.5" /> : <Volume2 className="h-3.5 w-3.5" />}
-                                                            {isSpeaking ? "Stop" : lang === "hi" ? "सुनो" : "Read Aloud"}
-                                                        </button>
-                                                    </div>
-                                                    {/* Animated sound wave bars */}
-                                                    {isSpeaking && (
-                                                        <div className="flex items-end justify-center gap-[3px] px-4 pb-3">
-                                                            {Array.from({ length: 20 }).map((_, i) => (
-                                                                <motion.div
-                                                                    key={i}
-                                                                    className="rounded-full"
-                                                                    style={{
-                                                                        width: "3px",
-                                                                        background: "linear-gradient(to top, var(--deep-maroon), var(--temple-gold))",
-                                                                    }}
-                                                                    animate={{
-                                                                        height: [8, 16 + Math.random() * 20, 8],
-                                                                    }}
-                                                                    transition={{
-                                                                        duration: 0.4 + Math.random() * 0.4,
-                                                                        repeat: Infinity,
-                                                                        delay: i * 0.05,
-                                                                    }}
-                                                                />
-                                                            ))}
-                                                        </div>
-                                                    )}
-                                                </div>
 
                                                 {/* Feature recommendation */}
                                                 {response.featureRecommendation && (
