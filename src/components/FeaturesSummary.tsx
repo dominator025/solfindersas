@@ -35,7 +35,7 @@ const features = [
         title: "Dear Diary",
         description: "Pour your heart into a soul journal and receive ancient wisdom — an AI companion rooted in 5,000 years of heritage.",
         color: "#c4a265",
-        image: null,
+        image: "/images/feature_diary.png",
         href: "/diary",
     },
 ];
